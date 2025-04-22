@@ -1,13 +1,19 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { TicTacToeService } from './services/tictactoe.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'rl-demo';
+  constructor(
+    public tictactoeService: TicTacToeService
+  ) {}
+
+  train(): void {
+    this.tictactoeService.train(1000);
+  }
 }
