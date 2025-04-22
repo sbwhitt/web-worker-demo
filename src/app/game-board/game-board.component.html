@@ -1,0 +1,21 @@
+<div class="board">
+  @for (t of tiles; track t) {
+  <button
+    class="tile"
+    [disabled]="board()[t] !== '0' || outcome() !== 'active'"
+    (click)="handlePlayerAction(t)"
+  >
+    @switch (board()[t]) {
+      @case ('1') {
+        <img class="icon" src="icons/x.svg" />
+      }
+      @case ('2') {
+        <img class="icon" src="icons/o.svg" />
+      }
+      @default {
+        {{''}}
+      }
+    }
+  </button>
+  }
+</div>

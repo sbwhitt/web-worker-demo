@@ -1,0 +1,22 @@
+.board {
+  width: fit-content;
+  max-width: 600px;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  margin: auto;
+}
+
+.tile {
+  width: 5rem;
+  height: 5rem;
+  padding: 0.5rem;
+  background: lightgray;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.icon {
+  width: 40px;
+}

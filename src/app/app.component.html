@@ -1,1 +1,33 @@
-<button (click)="train()">train</button>
+<div class="container">
+  <div style="margin: auto;">
+    <button (click)="trainLearner()">train learner</button>
+    <button (click)="resetLearner()">reset learner</button>
+  </div>
+  @if (trained) {
+    @let currentBoard = tictactoeService.currentBoard;
+    @let currentOutcome = tictactoeService.currentOutcome;
+    <app-game-board
+      [board]="currentBoard()"
+      [outcome]="currentOutcome()"
+      (playerMove)="playerTurn($event)"
+    ></app-game-board>
+    <div style="margin: auto; display: flex; flex-direction: column;">
+      @if (currentOutcome() !== "active") {
+        <p>
+        @switch (currentOutcome()) {
+          @case ("win") {
+            You lose...
+          }
+          @case ("lose") {
+            You win!
+          }
+          @case ("draw") {
+            Draw.
+          }
+        }
+        </p>
+        <button (click)="newGame()">new game</button>
+      }
+    </div>
+  }
+</div>
