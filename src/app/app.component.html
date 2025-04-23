@@ -3,7 +3,8 @@
     <button (click)="trainLearner()">train learner</button>
     <button (click)="resetLearner()">reset learner</button>
   </div>
-  @if (trained) {
+  @let learnerActive = tictactoeService.learnerActive;
+  @if (learnerActive()) {
     @let currentBoard = tictactoeService.currentBoard;
     @let currentOutcome = tictactoeService.currentOutcome;
     <app-game-board

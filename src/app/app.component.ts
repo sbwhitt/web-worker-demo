@@ -10,22 +10,16 @@ import { GameBoardComponent } from "./game-board/game-board.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  trained = false;
-
   constructor(
     public tictactoeService: TicTacToeService
   ) {}
 
   trainLearner(): void {
-    this.tictactoeService.trainLearner(1000).then(() => {
-      this.trained = true;
-      return this.tictactoeService.startGame();
-    });
+    this.tictactoeService.trainLearner();
   }
 
   resetLearner(): void {
     this.tictactoeService.resetLearner();
-    this.trained = false;
   }
 
   playerTurn(action: number): void {

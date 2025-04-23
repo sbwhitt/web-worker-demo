@@ -1,15 +1,17 @@
-import { computed, Injectable, Signal, signal } from '@angular/core';
-import QLearner from './QLearner';
+import { computed, Injectable, OnDestroy, Signal, signal } from '@angular/core';
+import { QLearnerDriver } from './QLearnerDriver';
+import { TrainingWorker } from '../worker/TrainingWorker';
+import { Subscription } from 'rxjs';
 
 export type Outcome = "win" | "lose" | "draw" | "active";
 
 @Injectable({
   providedIn: 'root'
 })
-export class TicTacToeService {
-  private numStates = Math.pow(3, 9);
-  private numActions = 9;
-  private qLearner!: QLearner;
+export class TicTacToeService implements OnDestroy {
+  private subs: Subscription[] = [];
+  private worker!: TrainingWorker;
+  private learner!: QLearnerDriver;
   private LINES = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
     [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
@@ -22,45 +24,31 @@ export class TicTacToeService {
       this.toState(this.currentBoard())
     );
   });
+  public learnerActive = signal(false);
 
   constructor() {
-    this.qLearner = new QLearner(this.numStates, this.numActions);
-  }
-
-  public async trainLearner(games: number): Promise<void> {
-    console.log(`starting training with ${games} games`);
-    const limit = 1000;
-    const start = Date.now();
-    for (let game = 0; game < games; game++) {
-      let count = 0;
-      let gameReward = 0;
-      let board = "000000000";
-      let state = this.toState(board);
-      let action = await this.qLearner.setState(state);
-      let outcome = "active";
-      while (outcome === "active" && count < limit) {
-        board = this.updateBoard(state, action, true);
-        state = this.toState(board);
-        outcome = this.getOutcome(state);
-        const reward = this.getReward(outcome);
-
-        action = await this.qLearner.query(state, reward);
-
-        gameReward += reward;
-        count += 1;
-      }
-    }
-    console.log(`training complete after ${(Date.now() - start)/1000} seconds`);
+    this.worker = new TrainingWorker();
   }
 
   public resetLearner(): void {
-    this.qLearner = new QLearner(this.numStates, this.numActions);
     this.currentBoard.set("000000000");
+    this.learnerActive.set(false);
   }
 
-  public async startGame(): Promise<void> {
+  public trainLearner(): void {
+    this.worker.run();
+    const sub = this.worker.onmessage().subscribe(async (msg) => {
+      this.learner = new QLearnerDriver(msg.data);
+      this.startGame();
+      this.learnerActive.set(true);
+    });
+    this.subs.push(sub);
+  }
+
+  public startGame(): void {
     this.currentBoard.set("000000000");
-    await this.takeLearnerTurn("active");
+    this.learner.setState(this.toState(this.currentBoard()));
+    this.takeLearnerTurn("active");
   }
 
   public async takePlayerTurn(action: number): Promise<void> {
@@ -71,11 +59,11 @@ export class TicTacToeService {
     await this.takeLearnerTurn(this.getOutcome(this.toState(this.currentBoard())));
   }
 
-  private async takeLearnerTurn(outcome: string): Promise<void> {
+  private takeLearnerTurn(outcome: string): void {
     let newBoard = this.currentBoard();
     while (newBoard == this.currentBoard()) {
       let state = this.toState(this.currentBoard());
-      const learnerAction = await this.qLearner.query(state, this.getReward(outcome));
+      const learnerAction = this.learner.query(state, this.getReward(outcome));
       newBoard = this.updateBoard(state, learnerAction, false, 1);
     }
     this.currentBoard.set(newBoard);
@@ -158,5 +146,9 @@ export class TicTacToeService {
     if (board[action] !== "0") { return board; }
     board = this.place(board, action, player);
     return training ? this.placeOpponent(board) : board;
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }
