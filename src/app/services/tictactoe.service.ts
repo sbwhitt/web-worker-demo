@@ -1,7 +1,6 @@
 import { computed, Injectable, OnDestroy, Signal, signal } from '@angular/core';
-import { QLearnerDriver } from './QLearnerDriver';
-import { TrainingWorker } from '../worker/TrainingWorker';
 import { Subscription } from 'rxjs';
+import { QLearner } from '../helpers/TicTacToeLearner';
 
 export type Outcome = "win" | "lose" | "draw" | "active";
 
@@ -10,8 +9,8 @@ export type Outcome = "win" | "lose" | "draw" | "active";
 })
 export class TicTacToeService implements OnDestroy {
   private subs: Subscription[] = [];
-  private worker!: TrainingWorker;
-  private learner!: QLearnerDriver;
+  private worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
+  private learner!: QLearner;
   private LINES = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
     [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
@@ -26,9 +25,7 @@ export class TicTacToeService implements OnDestroy {
   });
   public learnerActive = signal(false);
 
-  constructor() {
-    this.worker = new TrainingWorker();
-  }
+  constructor() {}
 
   public resetLearner(): void {
     this.currentBoard.set("000000000");
@@ -36,34 +33,32 @@ export class TicTacToeService implements OnDestroy {
   }
 
   public trainLearner(): void {
-    this.worker.run();
-    const sub = this.worker.onmessage().subscribe(async (msg) => {
-      this.learner = new QLearnerDriver(msg.data);
+    this.worker.onmessage = ({ data }) => {
+      this.learner = new QLearner({ Q: data });
       this.startGame();
       this.learnerActive.set(true);
-    });
-    this.subs.push(sub);
+    };
+    this.worker.postMessage(150000);
   }
 
   public startGame(): void {
     this.currentBoard.set("000000000");
-    this.learner.setState(this.toState(this.currentBoard()));
-    this.takeLearnerTurn("active");
+    this.takeLearnerTurn();
   }
 
-  public async takePlayerTurn(action: number): Promise<void> {
+  public takePlayerTurn(action: number): void {
     this.currentBoard.set(
       this.updateBoard(this.toState(this.currentBoard()), action, false, 2)
     );
     if (this.currentOutcome() !== "active") { return; }
-    await this.takeLearnerTurn(this.getOutcome(this.toState(this.currentBoard())));
+    this.takeLearnerTurn();
   }
 
-  private takeLearnerTurn(outcome: string): void {
+  private takeLearnerTurn(): void {
     let newBoard = this.currentBoard();
     while (newBoard == this.currentBoard()) {
       let state = this.toState(this.currentBoard());
-      const learnerAction = this.learner.query(state, this.getReward(outcome));
+      const learnerAction = this.learner.setState(state);
       newBoard = this.updateBoard(state, learnerAction, false, 1);
     }
     this.currentBoard.set(newBoard);

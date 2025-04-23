@@ -1,74 +1,89 @@
-export function TicTacToeLearner() {
-  class QLearner {
-    private alpha!: number;
-    private gamma!: number;
-    private rar!: number;
-    private radr!: number;
-    private s!: number;
-    private a!: number;
-    public Q!: number[][];
-  
-    constructor(
-      numStates: number,
-      numActions: number,
-      alpha: number = 0.2,
-      gamma: number = 0.9,
-      rar: number = 0.5,
-      radr: number = 0.99
-    ) {
-      this.Q = this.buildQ(numStates, numActions);
-      this.alpha = alpha;
-      this.gamma = gamma;
-      this.rar = rar;
-      this.radr = radr;
+export interface QLearnerOptions {
+  numStates?: number;
+  numActions?: number;
+  Q?: number[][];
+}
+
+export class QLearner {
+  private alpha!: number;
+  private gamma!: number;
+  private rar!: number;
+  private radr!: number;
+  private s!: number;
+  private a!: number;
+  public Q!: number[][];
+
+  constructor(
+    options: QLearnerOptions,
+    alpha: number = 0.2,
+    gamma: number = 0.9,
+    rar: number = 0.5,
+    radr: number = 0.99
+  ) {
+    // initialize with numStates and numActions for fresh QLearner
+    if (options.numStates === undefined && options.numActions === undefined && options.Q !== undefined) {
+      this.Q = options.Q;
     }
-  
-    public setState = (s: number): number => {
-      this.s = s;
-      this.a = this.selectAction(s);
-      return this.a;
+    // or inititalize with pre-built Q table for immediate use
+    else if (options.numStates !== undefined && options.numActions !== undefined) {
+      this.Q = this.buildQ(options.numStates, options.numActions);
     }
-  
-    public query = (sPrime: number, r: number): number => {
-      this.updateQ(this.s, this.a, sPrime, r);
-  
-      this.s = sPrime;
-      this.a = this.selectAction(sPrime);
-  
-      this.rar = this.rar * this.radr;
-  
-      return this.a;
+    else {
+      throw Error("QLearner initialized with invalid options.");
     }
-  
-    private buildQ = (numStates: number, numActions: number): number[][] => {
-      const arr = [];
-      while (arr.length < numStates) {
-        arr.push(new Array(numActions).fill(0));
-      }
-      return arr;
-    }
-  
-    private selectAction = (s: number): number => {
-      const actions = this.Q[s];
-      let a = 0;
-      let max = actions[a];
-      for (let i = 1; i < actions.length; i++) {
-        if (actions[i] > max) {
-          a = i;
-          max = actions[i];
-        }
-      }
-      return a;
-    }
-  
-    private updateQ = (s: number, a: number, sPrime: number, r: number): void => {
-      const currentQ = this.Q[s][a];
-      const nextQ = this.Q[sPrime][this.selectAction(sPrime)];
-  
-      this.Q[s][a] = currentQ + this.alpha*(r + this.gamma*nextQ - currentQ);
-    }
+    this.alpha = alpha;
+    this.gamma = gamma;
+    this.rar = rar;
+    this.radr = radr;
   }
 
+  public setState = (s: number): number => {
+    this.s = s;
+    this.a = this.selectAction(s);
+    return this.a;
+  }
+
+  public query = (sPrime: number, r: number): number => {
+    this.updateQ(this.s, this.a, sPrime, r);
+
+    this.s = sPrime;
+    this.a = this.selectAction(sPrime);
+
+    this.rar = this.rar * this.radr;
+
+    return this.a;
+  }
+
+  private buildQ = (numStates: number, numActions: number): number[][] => {
+    const arr = [];
+    while (arr.length < numStates) {
+      arr.push(new Array(numActions).fill(0));
+    }
+    return arr;
+  }
+
+  private selectAction = (s: number): number => {
+    const actions = this.Q[s];
+    let a = 0;
+    let max = actions[a];
+    for (let i = 1; i < actions.length; i++) {
+      if (actions[i] > max) {
+        a = i;
+        max = actions[i];
+      }
+    }
+    return a;
+  }
+
+  private updateQ = (s: number, a: number, sPrime: number, r: number): void => {
+    const currentQ = this.Q[s][a];
+    const nextQ = this.Q[sPrime][this.selectAction(sPrime)];
+
+    this.Q[s][a] = currentQ + this.alpha*(r + this.gamma*nextQ - currentQ);
+  }
+}
+
+export function trainLearner(games: number) {
   type Outcome = "win" | "lose" | "draw" | "active";
 
   const numStates = Math.pow(3, 9);
@@ -79,7 +94,7 @@ export function TicTacToeLearner() {
     [0, 4, 8], [2, 4, 6]             // diags
   ];
 
-  let qLearner = new QLearner(numStates, numActions);
+  let qLearner = new QLearner({ numStates, numActions });
 
   const trainLearner = (games: number): void => {
     const limit = 1000;
@@ -102,7 +117,6 @@ export function TicTacToeLearner() {
         count += 1;
       }
     }
-    return;
   }
 
   const toBoard = (state: number): string => {
@@ -151,8 +165,9 @@ export function TicTacToeLearner() {
     if (free.length === 0) { return board; }
 
     let action: number | null = null;
+    const rand = Math.random();
     for (let line of LINES) {
-      if (Math.random() < 0.5) { break; } // test moving this out of loop
+      if (rand < 0.5) { break; } // test moving this out of loop
   
       const a = line[0]; const b = line[1]; const c = line[2];
       if ((board[a] === board[b]) && (board[c] === "0")) {
@@ -184,6 +199,6 @@ export function TicTacToeLearner() {
     return training ? placeOpponent(board) : board;
   }
 
-  trainLearner(150000);
-  postMessage(qLearner.Q);
+  trainLearner(games);
+  return qLearner.Q;
 }
