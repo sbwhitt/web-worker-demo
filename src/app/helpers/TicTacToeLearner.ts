@@ -39,15 +39,15 @@ export class QLearner {
 
   public setState = (s: number): number => {
     this.s = s;
-    this.a = this.selectAction(s);
+    this.a = this.selectAction(s, false);
     return this.a;
   }
 
-  public query = (sPrime: number, r: number): number => {
+  public query = (sPrime: number, r: number, random: boolean): number => {
     this.updateQ(this.s, this.a, sPrime, r);
 
     this.s = sPrime;
-    this.a = this.selectAction(sPrime);
+    this.a = this.selectAction(sPrime, random);
 
     this.rar = this.rar * this.radr;
 
@@ -62,8 +62,13 @@ export class QLearner {
     return arr;
   }
 
-  private selectAction = (s: number): number => {
+  private selectAction = (s: number, random: boolean): number => {
     const actions = this.Q[s];
+    const r = Math.random();
+    if (random && r <= this.rar) {
+      return Math.floor(Math.random()*actions.length);
+    }
+
     let a = 0;
     let max = actions[a];
     for (let i = 1; i < actions.length; i++) {
@@ -77,7 +82,7 @@ export class QLearner {
 
   private updateQ = (s: number, a: number, sPrime: number, r: number): void => {
     const currentQ = this.Q[s][a];
-    const nextQ = this.Q[sPrime][this.selectAction(sPrime)];
+    const nextQ = this.Q[sPrime][this.selectAction(sPrime, false)];
 
     this.Q[s][a] = currentQ + this.alpha*(r + this.gamma*nextQ - currentQ);
   }
@@ -110,12 +115,11 @@ export function trainLearner(games: number) {
         state = toState(board);
         outcome = getOutcome(state);
         const reward = getReward(outcome);
-
-        action = qLearner.query(state, reward);
-
+        action = qLearner.query(state, reward, true);
         gameReward += reward;
         count += 1;
       }
+      postMessage(game+1);
     }
   }
 
@@ -167,7 +171,7 @@ export function trainLearner(games: number) {
     let action: number | null = null;
     const rand = Math.random();
     for (let line of LINES) {
-      if (rand < 0.5) { break; } // test moving this out of loop
+      if (rand < 0.5) { break; }
   
       const a = line[0]; const b = line[1]; const c = line[2];
       if ((board[a] === board[b]) && (board[c] === "0")) {

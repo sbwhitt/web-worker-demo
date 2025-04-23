@@ -24,25 +24,33 @@ export class TicTacToeService implements OnDestroy {
     );
   });
   public learnerActive = signal(false);
+  public gamesFinished = signal(0);
 
   constructor() {}
 
   public resetLearner(): void {
     this.currentBoard.set("000000000");
+    this.gamesFinished.set(0);
     this.learnerActive.set(false);
   }
 
-  public trainLearner(): void {
+  public trainLearner(games: number): void {
     this.worker.onmessage = ({ data }) => {
-      this.learner = new QLearner({ Q: data });
-      this.startGame();
-      this.learnerActive.set(true);
+      if (typeof data === "number") {
+        this.gamesFinished.set(data);
+      }
+      else {
+        this.learner = new QLearner({ Q: data });
+        this.startGame();
+        this.learnerActive.set(true);
+      }
     };
-    this.worker.postMessage(150000);
+    this.worker.postMessage(games);
   }
 
   public startGame(): void {
     this.currentBoard.set("000000000");
+    this.learner.setState(this.toState(this.currentBoard()));
     this.takeLearnerTurn();
   }
 
@@ -56,10 +64,14 @@ export class TicTacToeService implements OnDestroy {
 
   private takeLearnerTurn(): void {
     let newBoard = this.currentBoard();
-    while (newBoard == this.currentBoard()) {
+    const limit = 1000;
+    let count = 0;
+    while (newBoard == this.currentBoard() && count < limit) {
       let state = this.toState(this.currentBoard());
-      const learnerAction = this.learner.setState(state);
+      let reward = this.getReward(this.getOutcome(state));
+      const learnerAction = this.learner.query(state, reward, false);
       newBoard = this.updateBoard(state, learnerAction, false, 1);
+      count++;
     }
     this.currentBoard.set(newBoard);
   }

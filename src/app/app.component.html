@@ -1,4 +1,6 @@
 <div class="container">
+  <label>Number of training games:</label>
+  <input [formControl]="trainingGames" type="number" />
   <div style="margin: auto;">
     <button (click)="trainLearner()">train learner</button>
     <button (click)="resetLearner()">reset learner</button>
@@ -12,7 +14,7 @@
       [outcome]="currentOutcome()"
       (playerMove)="playerTurn($event)"
     ></app-game-board>
-    <div style="margin: auto; display: flex; flex-direction: column;">
+    <div class="container">
       @if (currentOutcome() !== "active") {
         <p>
         @switch (currentOutcome()) {
@@ -30,5 +32,9 @@
         <button (click)="newGame()">new game</button>
       }
     </div>
+  }
+  @else {
+    @let gamesFinished = tictactoeService.gamesFinished;
+    <p>Games finished: {{gamesFinished()}}</p>
   }
 </div>
