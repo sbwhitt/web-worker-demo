@@ -1,7 +1,7 @@
 .bar {
   text-align: start;
   position: relative;
-  height: 3rem;
+  height: 2rem;
   background: rgba(0, 0, 0, 0);
   outline: solid 1px gray;
   border-radius: 5px;
@@ -14,6 +14,6 @@
   justify-content: center;
   height: 100%;
   width: 100%;
-  background: var(--active-lighter);
+  background: var(--active);
   border-radius: 5px;
 }

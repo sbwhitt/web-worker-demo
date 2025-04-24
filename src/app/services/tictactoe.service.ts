@@ -58,7 +58,6 @@ export class TicTacToeService implements OnDestroy {
     this.currentBoard.set(
       this.updateBoard(this.toState(this.currentBoard()), action, false, 2)
     );
-    if (this.currentOutcome() !== "active") { return; }
     this.takeLearnerTurn();
   }
 
@@ -70,6 +69,7 @@ export class TicTacToeService implements OnDestroy {
       let state = this.toState(this.currentBoard());
       let reward = this.getReward(this.getOutcome(state));
       const learnerAction = this.learner.query(state, reward, false);
+      if (this.currentOutcome() !== "active") { return; }
       newBoard = this.updateBoard(state, learnerAction, false, 1);
       count++;
     }
