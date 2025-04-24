@@ -18,6 +18,11 @@ export class AppComponent {
     public tictactoeService: TicTacToeService
   ) {}
 
+  addGames(amount: number): void {
+    const games = this.trainingGames.value ?? 0;
+    this.trainingGames.setValue(games + amount);
+  }
+
   trainLearner(): void {
     if (!this.trainingGames.value) { return; }
     this.tictactoeService.trainLearner(this.trainingGames.value);

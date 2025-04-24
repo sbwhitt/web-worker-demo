@@ -1,7 +1,7 @@
 <div class="container">
   @let learnerActive = tictactoeService.learnerActive;
   @if (learnerActive()) {
-    <div style="display: flex; flex-direction: row; margin: auto; gap: 1rem;">
+    <div class="btn-row">
       <button class="btn" (click)="resetLearner()">reset learner</button>
       <button class="btn" (click)="newGame()">new game</button>
     </div>
@@ -35,6 +35,12 @@
     @if (gamesFinished() === 0) {
       <label>Number of training games:</label>
       <input [formControl]="trainingGames" type="number" />
+      <div class="add-row">
+        <button class="btn left" (click)="addGames(-10000)">-10k</button>
+        <button class="btn" (click)="addGames(-1000)">-1k</button>
+        <button class="btn" (click)="addGames(1000)">+1k</button>
+        <button class="btn right" (click)="addGames(10000)">+10k</button>
+      </div>
       <button class="btn" (click)="trainLearner()">train learner</button>
     }
     @else {

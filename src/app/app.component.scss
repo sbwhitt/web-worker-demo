@@ -14,3 +14,16 @@
   border-radius: 10px;
   box-shadow: 0 3px 26px 0 rgba(0,0,0,0.20);
 }
+
+.btn-row {
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  gap: 1rem;
+}
+
+.add-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
