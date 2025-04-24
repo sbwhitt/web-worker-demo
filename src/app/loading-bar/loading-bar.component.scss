@@ -1,11 +1,12 @@
 .bar {
+  width: 50%;
   text-align: start;
   position: relative;
-  height: 2rem;
-  background: rgba(0, 0, 0, 0);
-  outline: solid 1px gray;
-  border-radius: 5px;
-  margin-top: 0.5rem;
+  height: 1rem;
+  background: white;
+  border-radius: 15px;
+  margin: 0.5rem auto 0 auto;
+  box-shadow: var(--shadow);
 }
 
 .progress {
@@ -15,5 +16,5 @@
   height: 100%;
   width: 100%;
   background: var(--active);
-  border-radius: 5px;
+  border-radius: 15px;
 }

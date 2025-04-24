@@ -3,7 +3,7 @@
 }
 
 .container {
-  width: fit-content;
+  width: 16rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -12,5 +12,5 @@
   padding: 2rem;
   background: #efefef;
   border-radius: 10px;
-  box-shadow: 1px 2px 3px var(--accent-lighter);
+  box-shadow: 0 3px 26px 0 rgba(0,0,0,0.20);
 }

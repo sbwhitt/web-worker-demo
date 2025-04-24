@@ -65,7 +65,7 @@ export class TicTacToeService implements OnDestroy {
     let newBoard = this.currentBoard();
     const limit = 1000;
     let count = 0;
-    while (newBoard == this.currentBoard() && count < limit) {
+    while (newBoard === this.currentBoard() && count < limit) {
       let state = this.toState(this.currentBoard());
       let reward = this.getReward(this.getOutcome(state));
       const learnerAction = this.learner.query(state, reward, false);

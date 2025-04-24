@@ -1,7 +1,10 @@
 <div class="container">
   @let learnerActive = tictactoeService.learnerActive;
   @if (learnerActive()) {
-    <button (click)="resetLearner()">reset learner</button>
+    <div style="display: flex; flex-direction: row; margin: auto; gap: 1rem;">
+      <button class="btn" (click)="resetLearner()">reset learner</button>
+      <button class="btn" (click)="newGame()">new game</button>
+    </div>
     @let currentBoard = tictactoeService.currentBoard;
     @let currentOutcome = tictactoeService.currentOutcome;
     <app-game-board
@@ -11,7 +14,7 @@
     ></app-game-board>
     <div style="display: flex; flex-direction: column; margin: auto;">
       @if (currentOutcome() !== "active") {
-        <p>
+        <div>
         @switch (currentOutcome()) {
           @case ("win") {
             You lose...
@@ -23,17 +26,18 @@
             Draw.
           }
         }
-        </p>
-        <button (click)="newGame()">new game</button>
+      </div>
       }
     </div>
   }
   @else {
-    <label>Number of training games:</label>
-    <input [formControl]="trainingGames" type="number" />
-    <button (click)="trainLearner()">train learner</button>
     @let gamesFinished = tictactoeService.gamesFinished;
-    @if (gamesFinished() > 0) {
+    @if (gamesFinished() === 0) {
+      <label>Number of training games:</label>
+      <input [formControl]="trainingGames" type="number" />
+      <button class="btn" (click)="trainLearner()">train learner</button>
+    }
+    @else {
       <app-loading-bar
         [capacity]="trainingGames.value!"
         [progress]="gamesFinished()"

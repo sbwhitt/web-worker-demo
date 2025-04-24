@@ -12,12 +12,14 @@
   height: 5rem;
   padding: 0.5rem;
   background: lightgray;
+  border: none;
+  border-radius: 2px;
 }
 
 .active {
   &:hover {
     cursor: pointer;
-    background: lightblue;
+    background: var(--active);
   }
 }
 
