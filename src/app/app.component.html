@@ -34,7 +34,10 @@
     <button (click)="trainLearner()">train learner</button>
     @let gamesFinished = tictactoeService.gamesFinished;
     @if (gamesFinished() > 0) {
-      <p>Games finished: {{gamesFinished()}}</p>
+      <app-loading-bar
+        [capacity]="trainingGames.value!"
+        [progress]="gamesFinished()"
+      ></app-loading-bar>
     }
   }
 </div>

@@ -1,0 +1,19 @@
+.bar {
+  text-align: start;
+  position: relative;
+  height: 3rem;
+  background: rgba(0, 0, 0, 0);
+  outline: solid 1px gray;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: var(--active-lighter);
+  border-radius: 5px;
+}

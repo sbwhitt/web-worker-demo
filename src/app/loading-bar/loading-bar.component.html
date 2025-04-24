@@ -1,0 +1,13 @@
+@let fill = (progress() / capacity())*100;
+<span>
+  @if (fill !== 100) {
+    training...
+  }
+  @else {
+    done!
+  }
+</span>
+<div class="bar">
+  <div class="progress" [style.width]="fill + '%'">
+  </div>
+</div>
