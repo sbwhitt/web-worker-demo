@@ -11,7 +11,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  trainingGames = new FormControl<number>(0);
+  trainingGames = new FormControl<number>(1000);
 
   constructor(
     public tictactoeService: TicTacToeService

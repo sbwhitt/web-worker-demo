@@ -42,7 +42,7 @@ export class TicTacToeService implements OnDestroy {
       else {
         this.learner = new QLearner({ Q: data });
         this.startGame();
-        this.learnerActive.set(true);
+        setTimeout(() => this.learnerActive.set(true), 500);
       }
     };
     this.worker.postMessage(games);

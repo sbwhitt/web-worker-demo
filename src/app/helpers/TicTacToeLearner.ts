@@ -15,10 +15,10 @@ export class QLearner {
 
   constructor(
     options: QLearnerOptions,
-    alpha: number = 0.2,
+    alpha: number = 1,
     gamma: number = 0.9,
     rar: number = 0.5,
-    radr: number = 0.99
+    radr: number = 0.9
   ) {
     // initialize with numStates and numActions for fresh QLearner
     if (options.numStates === undefined && options.numActions === undefined && options.Q !== undefined) {
@@ -147,10 +147,10 @@ export function trainLearner(games: number) {
 
   const getReward = (outcome: string): number => {
     switch (outcome) {
-      case "win": return 1
+      case "win": return 3
       case "lose": return -5
-      case "draw":
-      case "active":
+      case "draw": return -1;
+      case "active": return -2;
       default: return -1;
     }
   }

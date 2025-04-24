@@ -12,8 +12,12 @@
   height: 5rem;
   padding: 0.5rem;
   background: lightgray;
+}
+
+.active {
   &:hover {
     cursor: pointer;
+    background: lightblue;
   }
 }
 

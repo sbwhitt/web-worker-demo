@@ -1,0 +1,18 @@
+:root {
+  --primary: #323543;
+  --primary-clear: #323543af;
+  --primary-lighter: #525563;
+  --accent: #1b1b23;
+  --accent-lighter: #3b3b43;
+  --active: #73cfea;
+  --active-lighter: #83d9f5;
+  --warn: #fd6363;
+  --confirm: #8bfd8b;
+  --font: Inter, sans-serif;
+}
+
+html {
+  height: 100vh;
+  font-family: var(--font);
+  background: repeating-linear-gradient(45deg, var(--primary), var(--accent), var(--primary) 0.5%);
+}
