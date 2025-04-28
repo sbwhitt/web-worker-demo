@@ -30,7 +30,7 @@
     <app-heatmap [qTable]="qTable()" [redraw]="redrawHeatmap"></app-heatmap> -->
   }
   @else {
-    @if (tictactoeService.gamesFinished()) {
+    @if (!tictactoeService.gamesFinished()) {
       <label>Number of training games:</label>
       <input [formControl]="trainingGames" type="number" />
       <div class="add-row">
