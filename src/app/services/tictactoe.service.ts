@@ -25,6 +25,9 @@ export class TicTacToeService implements OnDestroy {
   });
   public learnerActive = signal(false);
   public gamesFinished = signal(0);
+  public qTable = computed(() => {
+    return this.learnerActive() ? this.learner.Q : [];
+  });
 
   constructor() {}
 

@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
+import { Subject } from 'rxjs';
 import { TicTacToeService } from './services/tictactoe.service';
 import { GameBoardComponent } from "./game-board/game-board.component";
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { LoadingBarComponent } from './loading-bar/loading-bar.component';
+import { HeatmapComponent } from "./heatmap/heatmap.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ReactiveFormsModule, GameBoardComponent, LoadingBarComponent],
+  imports: [ReactiveFormsModule, GameBoardComponent, LoadingBarComponent, HeatmapComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   trainingGames = new FormControl<number>(10000);
+  redrawHeatmap = new Subject<boolean>();
 
   constructor(
     public tictactoeService: TicTacToeService
@@ -26,6 +29,7 @@ export class AppComponent {
   trainLearner(): void {
     if (!this.trainingGames.value) { return; }
     this.tictactoeService.trainLearner(this.trainingGames.value);
+    this.redrawHeatmap.next(true);
   }
 
   resetLearner(): void {
@@ -34,6 +38,7 @@ export class AppComponent {
 
   playerTurn(action: number): void {
     this.tictactoeService.takePlayerTurn(action);
+    this.redrawHeatmap.next(true);
   }
 
   newGame(): void {

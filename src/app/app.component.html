@@ -1,21 +1,18 @@
 <div class="container">
-  @let learnerActive = tictactoeService.learnerActive;
-  @if (learnerActive()) {
+  @if (tictactoeService.learnerActive()) {
     <div class="btn-row">
       <button class="btn" (click)="resetLearner()">reset learner</button>
       <button class="btn" (click)="newGame()">new game</button>
     </div>
-    @let currentBoard = tictactoeService.currentBoard;
-    @let currentOutcome = tictactoeService.currentOutcome;
     <app-game-board
-      [board]="currentBoard()"
-      [outcome]="currentOutcome()"
+      [board]="tictactoeService.currentBoard()"
+      [outcome]="tictactoeService.currentOutcome()"
       (playerMove)="playerTurn($event)"
     ></app-game-board>
     <div style="display: flex; flex-direction: column; margin: auto;">
-      @if (currentOutcome() !== "active") {
+      @if (tictactoeService.currentOutcome() !== "active") {
         <div>
-        @switch (currentOutcome()) {
+        @switch (tictactoeService.currentOutcome()) {
           @case ("win") {
             You lose...
           }
@@ -29,10 +26,11 @@
       </div>
       }
     </div>
+    <!-- @let qTable = tictactoeService.qTable;
+    <app-heatmap [qTable]="qTable()" [redraw]="redrawHeatmap"></app-heatmap> -->
   }
   @else {
-    @let gamesFinished = tictactoeService.gamesFinished;
-    @if (gamesFinished() === 0) {
+    @if (tictactoeService.gamesFinished()) {
       <label>Number of training games:</label>
       <input [formControl]="trainingGames" type="number" />
       <div class="add-row">
@@ -46,7 +44,7 @@
     @else {
       <app-loading-bar
         [capacity]="trainingGames.value!"
-        [progress]="gamesFinished()"
+        [progress]="tictactoeService.gamesFinished()"
       ></app-loading-bar>
     }
   }
