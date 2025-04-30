@@ -5,7 +5,7 @@ rm -rf ./docs
 
 # https://stackoverflow.com/questions/59341718/not-allowed-to-load-local-resource-error-on-chrome-angular-app-is-not-running
 # https://stackoverflow.com/questions/42292761/angular-cli-build-with-base-href-also-return-programs-folder-when-using-git-bash
-ng build --output-path docs --base-href '//cardo\'
+ng build --output-path docs --base-href '//web-worker-demo\'
 
 # rearrange the build files.....
 mv ./docs/browser/* ./docs
