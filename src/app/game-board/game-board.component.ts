@@ -1,11 +1,10 @@
 import { Component, input, output } from '@angular/core';
 
 @Component({
-  selector: 'app-game-board',
-  standalone: true,
-  imports: [],
-  templateUrl: './game-board.component.html',
-  styleUrl: './game-board.component.scss'
+    selector: 'app-game-board',
+    imports: [],
+    templateUrl: './game-board.component.html',
+    styleUrl: './game-board.component.scss'
 })
 export class GameBoardComponent {
   tiles = [0, 1, 2, 3, 4, 5, 6, 7, 8];

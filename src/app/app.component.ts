@@ -7,11 +7,10 @@ import { LoadingBarComponent } from './loading-bar/loading-bar.component';
 import { HeatmapComponent } from "./heatmap/heatmap.component";
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ReactiveFormsModule, GameBoardComponent, LoadingBarComponent, HeatmapComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [ReactiveFormsModule, GameBoardComponent, LoadingBarComponent, HeatmapComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   trainingGames = new FormControl<number>(10000);

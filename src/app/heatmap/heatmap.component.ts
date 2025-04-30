@@ -3,11 +3,10 @@ import { DOCUMENT } from '@angular/common';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-heatmap',
-  standalone: true,
-  imports: [],
-  templateUrl: './heatmap.component.html',
-  styleUrl: './heatmap.component.scss'
+    selector: 'app-heatmap',
+    imports: [],
+    templateUrl: './heatmap.component.html',
+    styleUrl: './heatmap.component.scss'
 })
 export class HeatmapComponent implements OnInit {
   subs = [];
