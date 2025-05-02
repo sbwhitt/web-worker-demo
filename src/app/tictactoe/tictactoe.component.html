@@ -17,6 +17,11 @@
         [capacity]="trainingGames.value!"
         [progress]="tictactoeService.gamesFinished()"
       ></app-loading-bar>
+      <div class="btn-row">
+        <button class="btn" (click)="tictactoeService.terminateWorker()">
+          terminate worker
+        </button>
+      </div>
     }
   }
   @else {

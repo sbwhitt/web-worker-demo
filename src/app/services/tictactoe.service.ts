@@ -19,13 +19,7 @@ export class TicTacToeService {
   constructor(
     private settingsService: SettingsService
   ) {
-    if (!window.Worker) {
-      console.log("WebWorkers not supported by browser!");
-      this.worker = null;
-    }
-    else {
-      this.worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
-    }
+    this.initWorker();
   }
 
   public resetLearner(): void {
@@ -66,6 +60,22 @@ export class TicTacToeService {
     this.gameState.set(
       this.learner.takePlayerTurn(action, this.gameState().board)
     );
+  }
+
+  public terminateWorker(): void {
+    if (!this.worker) { return; }
+    this.worker.terminate();
+    this.resetLearner();
+  }
+
+  private initWorker(): void {
+    if (!window.Worker) {
+      console.error("WebWorkers not supported by browser!");
+      this.worker = null;
+    }
+    else {
+      this.worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
+    }
   }
 
   private trainLearnerNoWorker(games: number): void {

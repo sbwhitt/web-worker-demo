@@ -15,5 +15,10 @@
   }
   @else {
     <app-spinner></app-spinner>
+    <div class="btn-row">
+      <button class="btn" (click)="fibonacciService.terminateWorker()">
+        terminate worker
+      </button>
+    </div>
   }
 </div>

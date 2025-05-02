@@ -20,13 +20,7 @@ export class FibonacciService {
   constructor(
     private settingsService: SettingsService
   ) {
-    if (!window.Worker) {
-      console.log("WebWorkers not supported by browser!");
-      this.worker = null;
-    }
-    else {
-      this.worker = new Worker(new URL('../workers/fibonacci.worker', import.meta.url));
-    }
+    this.initWorker();
   }
 
   public findNumber(num: number): void {
@@ -40,6 +34,23 @@ export class FibonacciService {
       this.running.set(false);
     });
     this.worker.postMessage(num);
+  }
+
+  public terminateWorker(): void {
+    if (!this.worker) { return; }
+    this.worker.terminate();
+    this.result.set(0);
+    this.running.set(false);
+  }
+
+  private initWorker(): void {
+    if (!window.Worker) {
+      console.error("WebWorkers not supported by browser!");
+      this.worker = null;
+    }
+    else {
+      this.worker = new Worker(new URL('../workers/fibonacci.worker', import.meta.url));
+    }
   }
 
   private findNumberNoWorker(num: number): void {
