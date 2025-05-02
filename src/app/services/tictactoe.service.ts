@@ -1,5 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { GameState, TicTacToeLearner } from '../helpers/TicTacToeLearner';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,9 @@ export class TicTacToeService {
   public learnerActive = signal(false);
   public gamesFinished = signal(0);
 
-  constructor() {
+  constructor(
+    private settingsService: SettingsService
+  ) {
     if (!window.Worker) {
       console.log("WebWorkers not supported by browser!");
       this.worker = null;
@@ -34,8 +37,8 @@ export class TicTacToeService {
     this.learnerActive.set(false);
   }
 
-  public trainLearner(games: number, workerEnabled = true): void {
-    if (!this.worker || !workerEnabled) {
+  public trainLearner(games: number): void {
+    if (!this.worker || !this.settingsService.webWorkersEnabled()) {
       this.trainLearnerNoWorker(games);
       return;
     }

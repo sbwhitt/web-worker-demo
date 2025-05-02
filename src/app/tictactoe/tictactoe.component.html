@@ -10,12 +10,6 @@
         <button class="btn right" (click)="addGames(10000)">+10k</button>
       </div>
       <button class="btn" (click)="trainLearner()">train learner</button>
-      <div class="btn-row">
-        <label style="display: flex; flex-direction: column; justify-content: center;">
-          Enable WebWorker:
-        </label>
-        <input type="checkbox" [formControl]="workerEnabled" />
-      </div>
     }
     @else {
       <app-loading-bar

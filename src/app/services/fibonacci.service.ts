@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { SettingsService } from './settings.service';
 
 export function fibonacci(n: number): number {
   if (n < 0) { throw Error("Invalid value!"); }
@@ -15,9 +16,10 @@ export class FibonacciService {
 
   public running = signal(false);
   public result = signal(0);
-  public progress = signal(0);
 
-  constructor() {
+  constructor(
+    private settingsService: SettingsService
+  ) {
     if (!window.Worker) {
       console.log("WebWorkers not supported by browser!");
       this.worker = null;
@@ -29,7 +31,7 @@ export class FibonacciService {
 
   public findNumber(num: number): void {
     this.running.set(true);
-    if (!this.worker) {
+    if (!this.worker || !this.settingsService.webWorkersEnabled()) {
       this.findNumberNoWorker(num);
       return;
     }
