@@ -1,18 +1,19 @@
 <div class="container">
   @if (tictactoeService.learnerActive()) {
+    @let gameState = tictactoeService.gameState;
     <div class="btn-row">
       <button class="btn" (click)="resetLearner()">reset learner</button>
       <button class="btn" (click)="newGame()">new game</button>
     </div>
     <app-game-board
-      [board]="tictactoeService.currentBoard()"
-      [outcome]="tictactoeService.currentOutcome()"
+      [board]="gameState().board"
+      [outcome]="gameState().outcome"
       (playerMove)="playerTurn($event)"
     ></app-game-board>
     <div style="display: flex; flex-direction: column; margin: auto;">
-      @if (tictactoeService.currentOutcome() !== "active") {
+      @if (gameState().outcome !== "active") {
         <div>
-        @switch (tictactoeService.currentOutcome()) {
+        @switch (gameState().outcome) {
           @case ("win") {
             You lose...
           }
@@ -26,8 +27,6 @@
       </div>
       }
     </div>
-    <!-- @let qTable = tictactoeService.qTable;
-    <app-heatmap [qTable]="qTable()" [redraw]="redrawHeatmap"></app-heatmap> -->
   }
   @else {
     @if (!tictactoeService.gamesFinished()) {

@@ -1,8 +1,12 @@
 /// <reference lib="webworker" />
 
-import { trainLearner } from "../helpers/TicTacToeLearner";
+import { TicTacToeLearner } from "../helpers/TicTacToeLearner";
 
 addEventListener('message', ({ data }) => {
-  const Q = trainLearner(data);
-  postMessage(Q);
+  if (typeof data !== "number") {
+    throw Error("Invalid data passed to worker.");
+  }
+  const learner = new TicTacToeLearner()
+  learner.train(data);
+  postMessage(learner.getQTable());
 });
