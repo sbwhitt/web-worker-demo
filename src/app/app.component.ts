@@ -11,7 +11,8 @@ import { LoadingBarComponent } from './loading-bar/loading-bar.component';
     styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  trainingGames = new FormControl<number>(10000);
+  workerEnabled = new FormControl<boolean>(true);
+  trainingGames = new FormControl<number>(150000);
 
   constructor(
     public tictactoeService: TicTacToeService
@@ -24,7 +25,8 @@ export class AppComponent {
 
   trainLearner(): void {
     if (!this.trainingGames.value) { return; }
-    this.tictactoeService.trainLearner(this.trainingGames.value);
+    const workerEnabled = this.workerEnabled.value ?? false;
+    this.tictactoeService.trainLearner(this.trainingGames.value, workerEnabled);
   }
 
   resetLearner(): void {

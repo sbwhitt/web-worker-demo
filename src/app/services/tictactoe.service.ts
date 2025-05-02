@@ -5,7 +5,7 @@ import { GameState, TicTacToeLearner } from '../helpers/TicTacToeLearner';
   providedIn: 'root'
 })
 export class TicTacToeService {
-  private worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
+  private worker!: Worker | null;
   private learner!: TicTacToeLearner;
 
   public gameState: WritableSignal<GameState> = signal({
@@ -15,7 +15,15 @@ export class TicTacToeService {
   public learnerActive = signal(false);
   public gamesFinished = signal(0);
 
-  constructor() {}
+  constructor() {
+    if (!window.Worker) {
+      console.log("WebWorkers not supported by browser!");
+      this.worker = null;
+    }
+    else {
+      this.worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
+    }
+  }
 
   public resetLearner(): void {
     this.gameState.set({
@@ -26,7 +34,11 @@ export class TicTacToeService {
     this.learnerActive.set(false);
   }
 
-  public trainLearner(games: number): void {
+  public trainLearner(games: number, workerEnabled = true): void {
+    if (!this.worker || !workerEnabled) {
+      this.trainLearnerNoWorker(games);
+      return;
+    }
     this.worker.onmessage = ({ data }) => {
       if (typeof data === "number") {
         this.gamesFinished.set(data);
@@ -50,5 +62,17 @@ export class TicTacToeService {
     this.gameState.set(
       this.learner.takePlayerTurn(action, this.gameState().board)
     );
+  }
+
+  private trainLearnerNoWorker(games: number): void {
+    this.learner = new TicTacToeLearner();
+    window.onmessage = ({ data }) => {
+      if (typeof data === "number") {
+        this.gamesFinished.set(data);
+      }
+    };
+    this.learner.train(games);
+    this.startGame();
+    setTimeout(() => this.learnerActive.set(true), 500);
   }
 }

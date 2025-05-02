@@ -45,7 +45,7 @@ export class TicTacToeLearner {
         gameReward += reward;
         count += 1;
       }
-      postMessage(game+1);
+      if (game % Math.floor(games / 100) === 0 || game === games-1) { postMessage(game+1); }
     }
   }
 
