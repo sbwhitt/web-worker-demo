@@ -1,4 +1,5 @@
 <div class="container">
+  <h3>TicTacToe Learner</h3>
   @if (!tictactoeService.learnerActive()) {
     @if (!tictactoeService.gamesFinished()) {
       <label>Number of training games:</label>
@@ -38,6 +39,7 @@
     <div style="display: flex; flex-direction: column; margin: auto;">
       @if (gameState().outcome !== "active") {
         <div>
+        <b>
         @switch (gameState().outcome) {
           @case ("win") {
             You lose...
@@ -49,7 +51,8 @@
             Draw.
           }
         }
-      </div>
+        </b>
+        </div>
       }
     </div>
   }
