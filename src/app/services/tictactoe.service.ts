@@ -66,6 +66,7 @@ export class TicTacToeService {
     if (!this.worker) { return; }
     this.worker.terminate();
     this.resetLearner();
+    this.initWorker();
   }
 
   private initWorker(): void {

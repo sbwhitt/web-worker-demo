@@ -41,6 +41,7 @@ export class FibonacciService {
     this.worker.terminate();
     this.result.set(0);
     this.running.set(false);
+    this.initWorker();
   }
 
   private initWorker(): void {
