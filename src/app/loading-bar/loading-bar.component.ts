@@ -7,6 +7,7 @@ import { Component, input } from '@angular/core';
     styleUrl: './loading-bar.component.scss'
 })
 export class LoadingBarComponent {
+  message = input('loading...');
   capacity = input(0);
   progress = input(0);
 }

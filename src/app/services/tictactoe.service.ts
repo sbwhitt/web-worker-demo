@@ -39,6 +39,7 @@ export class TicTacToeService {
       this.trainLearnerNoWorker(games);
       return;
     }
+
     this.worker.onmessage = ({ data }) => {
       if (typeof data === "number") {
         this.gamesFinished.set(data);

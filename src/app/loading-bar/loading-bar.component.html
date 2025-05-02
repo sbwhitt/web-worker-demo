@@ -1,7 +1,7 @@
 @let fill = (progress() / capacity())*100;
 <span>
   @if (fill !== 100) {
-    training...
+    {{message()}}
   }
   @else {
     done!

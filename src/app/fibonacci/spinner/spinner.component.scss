@@ -1,0 +1,18 @@
+@use '../../loading-bar/loading-bar.component.scss';
+
+.spinner {
+  width: 1rem;
+  height: 100%;
+  background: var(--active);
+  border-radius: 15px;
+  animation: move 1s alternate infinite;
+}
+
+@keyframes move {
+  from {
+    margin-left: 0%;
+  }
+  to {
+    margin-left: calc(100% - 1rem);
+  }
+}

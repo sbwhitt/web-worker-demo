@@ -19,6 +19,7 @@
     }
     @else {
       <app-loading-bar
+        message="training..."
         [capacity]="trainingGames.value!"
         [progress]="tictactoeService.gamesFinished()"
       ></app-loading-bar>
