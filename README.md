@@ -2,7 +2,7 @@
 
 A couple of interactive widgets that simulate long-running operations in the browser to demonstrate the usefullness of WebWorkers in Angular. 
 
-Hosted using Github Pages at: https://sbwhitt.github.io/web-worker-demo/
+Hosted using Github Pages at: <a href="https://sbwhitt.github.io/web-worker-demo/" target="_blank">https://sbwhitt.github.io/web-worker-demo/</a>
 
 ## Widgets
 
