@@ -10,7 +10,7 @@ Hosted using Github Pages at: <a href="https://sbwhitt.github.io/web-worker-demo
 * Reinforcement Learning applied to TicTacToe
 * Implemented using QLearning
 * Train Learner on a specific number of games
-  * Learner converges after playing ~30,000 games with the current setup
+  * Learner converges after playing ~60,000 games with the current setup
 
 ### Fibonacci Number Finder
 * Exponential time algorithm to find Nth Fibonacci number
