@@ -43,22 +43,21 @@ export class TicTacToeService {
       }
       else {
         this.learner = new TicTacToeLearner(data);
-        this.startGame();
         setTimeout(() => this.learnerActive.set(true), 500);
       }
     };
     this.worker.postMessage(games);
   }
 
-  public startGame(): void {
+  public startGame(piece: 1 | 2): void {
     this.gameState.set(
-      this.learner.startGame()
+      this.learner.startGame(piece)
     );
   }
 
-  public takeTurn(action: number): void {
+  public takeTurn(action: number, piece: 1 | 2): void {
     this.gameState.set(
-      this.learner.takePlayerTurn(action, this.gameState().board)
+      this.learner.takePlayerTurn(action, this.gameState().board, piece)
     );
   }
 
@@ -87,7 +86,6 @@ export class TicTacToeService {
       }
     };
     this.learner.train(games);
-    this.startGame();
     setTimeout(() => this.learnerActive.set(true), 500);
   }
 }

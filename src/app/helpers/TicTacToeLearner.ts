@@ -25,21 +25,25 @@ export class TicTacToeLearner {
         numStates: this.numStates,
         numActions: this.numActions
       });
+    if (Q) { this.train(1); } // make sure learner is fully initialized
   }
 
   public train(games: number): void {
     const limit = 1000;
     for (let game = 0; game < games; game++) {
+      const piece = game % 2 === 0 ? 1 : 2;
       let count = 0;
       let gameReward = 0;
-      let board = "000000000";
+      let board = piece === 1 ?
+        "000000000" :
+        this.placeOpponent("000000000", 1);
       let state = this.toState(board);
       let action = this.qLearner.setState(state);
       let outcome = "active";
       while (outcome === "active" && count < limit) {
-        board = this.updateBoard(state, action, true);
+        board = this.updateBoard(state, action, piece, true);
         state = this.toState(board);
-        outcome = this.getOutcome(state);
+        outcome = this.getOutcome(state, piece);
         const reward = this.getReward(outcome);
         action = this.qLearner.query(state, reward, true);
         gameReward += reward;
@@ -53,34 +57,37 @@ export class TicTacToeLearner {
     return this.qLearner.Q;
   }
 
-  public startGame(): GameState {
-    const action = this.qLearner.setState(this.toState("000000000"));
-    const newBoard = this.updateBoard(this.toState("000000000"), action, false, 1);
+  public startGame(playerPiece: 1 | 2): GameState {
+    let board = "000000000";
+    if (playerPiece === 2) {
+      const action = this.qLearner.setState(this.toState(board));
+      board = this.updateBoard(this.toState(board), action, 1);
+    }
     return {
-      board: newBoard,
-      outcome: this.getOutcome(this.toState(newBoard))
+      board,
+      outcome: this.getOutcome(this.toState(board), playerPiece)
     }
   }
 
-  public takePlayerTurn(action: number, board: string): GameState {
-    let currentBoard = this.updateBoard(this.toState(board), action, false, 2);
-    currentBoard = this.takeLearnerTurn(currentBoard);
+  public takePlayerTurn(action: number, board: string, piece: 1 | 2): GameState {
+    let currentBoard = this.updateBoard(this.toState(board), action, piece);
+    currentBoard = this.takeLearnerTurn(currentBoard, piece === 1 ? 2 : 1);
     return {
       board: currentBoard,
-      outcome: this.getOutcome(this.toState(currentBoard))
+      outcome: this.getOutcome(this.toState(currentBoard), piece)
     }
   }
 
-  private takeLearnerTurn(currentBoard: string): string {
+  private takeLearnerTurn(currentBoard: string, piece: 1 | 2): string {
     let newBoard = currentBoard;
     const limit = 1000;
     let count = 0;
     while (newBoard === currentBoard && count < limit) {
       let state = this.toState(newBoard);
-      let reward = this.getReward(this.getOutcome(state));
+      let reward = this.getReward(this.getOutcome(state, piece));
       const learnerAction = this.qLearner.query(state, reward, false);
-      newBoard = this.updateBoard(state, learnerAction, false, 1);
-      let outcome = this.getOutcome(this.toState(newBoard));
+      newBoard = this.updateBoard(state, learnerAction, piece);
+      let outcome = this.getOutcome(this.toState(newBoard), piece);
       if (outcome !== "active") { return newBoard; }
       count++;
     }
@@ -95,12 +102,16 @@ export class TicTacToeLearner {
     return Number.parseInt(board, 3);
   }
 
-  private getOutcome(state: number): Outcome {
+  private getOutcome(state: number, piece: 1 | 2): Outcome {
     const board = this.toBoard(state);
     for (let line of this.LINES) {
       const l = board[line[0]] + board[line[1]] + board[line[2]];
-      if (l === "111") { return "win"; }
-      if (l === "222") { return "lose"; }
+      if (l === "111") {
+        return piece === 1 ? "win" : "lose";
+      }
+      if (l === "222") {
+        return piece === 2 ? "win" : "lose";
+      }
     }
     for (let line of this.LINES) {
       const l = board[line[0]] + board[line[1]] + board[line[2]];
@@ -119,13 +130,13 @@ export class TicTacToeLearner {
     }
   }
 
-  private place(board: string, tile: number, player: 1 | 2): string {
+  private place(board: string, tile: number, piece: 1 | 2): string {
     const b = [...board];
-    b[tile] = player.toString();
+    b[tile] = piece.toString();
     return b.join("");
   }
 
-  private placeOpponent(board: string): string {
+  private placeOpponent(board: string, oppPiece: 1 | 2): string {
     const free: number[] = [];
     [...board].map((t, i) => {
       if (t === "0") { free.push(i); }
@@ -152,18 +163,20 @@ export class TicTacToeLearner {
       }
     }
     action = action ? action : free[Math.floor(Math.random() * free.length)];
-    return this.place(board, action, 2);
+    return this.place(board, action, oppPiece);
   }
 
   private updateBoard(
     state: number,
     action: number,
-    training: boolean = false,
-    player: 1 | 2 = 1
+    piece: 1 | 2,
+    training: boolean = false
   ): string {
     let board = this.toBoard(state);
     if (board[action] !== "0") { return board; }
-    board = this.place(board, action, player);
-    return training ? this.placeOpponent(board) : board;
+    board = this.place(board, action, piece);
+    return training ?
+      this.placeOpponent(board, piece === 1 ? 2 : 1) :
+      board;
   }
 }

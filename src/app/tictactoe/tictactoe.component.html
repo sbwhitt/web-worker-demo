@@ -26,34 +26,43 @@
     }
   }
   @else {
-    @let gameState = tictactoeService.gameState;
-    <div class="btn-row">
-      <button class="btn" (click)="resetLearner()">reset learner</button>
-      <button class="btn" (click)="newGame()">new game</button>
-    </div>
-    <app-game-board
-      [board]="gameState().board"
-      [outcome]="gameState().outcome"
-      (playerMove)="playerTurn($event)"
-    ></app-game-board>
-    <div style="display: flex; flex-direction: column; margin: auto;">
-      @if (gameState().outcome !== "active") {
-        <div>
-        <b>
-        @switch (gameState().outcome) {
-          @case ("win") {
-            You lose...
+    @if (gameActive) {
+      @let gameState = tictactoeService.gameState;
+      <div class="btn-row">
+        <button class="btn" (click)="resetLearner()">reset learner</button>
+        <button class="btn" (click)="newGame()">new game</button>
+      </div>
+      <app-game-board
+        [board]="gameState().board"
+        [outcome]="gameState().outcome"
+        (playerMove)="playerTurn($event)"
+      ></app-game-board>
+      <div style="display: flex; flex-direction: column; margin: auto;">
+        @if (gameState().outcome !== "active") {
+          <div>
+          <b>
+          @switch (gameState().outcome) {
+            @case ("win") {
+              You win!
+            }
+            @case ("lose") {
+              You lose...
+            }
+            @case ("draw") {
+              Draw.
+            }
           }
-          @case ("lose") {
-            You win!
-          }
-          @case ("draw") {
-            Draw.
-          }
+          </b>
+          </div>
         }
-        </b>
-        </div>
-      }
-    </div>
+      </div>
+    }
+    @else {
+      <label>Choose piece:</label>
+      <div class="btn-row">
+        <button class="btn" (click)="startGame(1)">X</button>
+        <button class="btn" (click)="startGame(2)">O</button>
+      </div>
+    }
   }
 </div>

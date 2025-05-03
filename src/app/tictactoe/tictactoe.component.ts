@@ -12,6 +12,8 @@ import { LoadingBarComponent } from '../loading-bar/loading-bar.component';
 })
 export class TictactoeComponent {
   trainingGames = new FormControl<number>(150000);
+  gameActive = false;
+  playerPiece: 1 | 2 = 1;
 
   constructor(
     public tictactoeService: TicTacToeService
@@ -28,14 +30,21 @@ export class TictactoeComponent {
   }
 
   resetLearner(): void {
+    this.gameActive = false;
     this.tictactoeService.resetLearner();
   }
 
   playerTurn(action: number): void {
-    this.tictactoeService.takeTurn(action);
+    this.tictactoeService.takeTurn(action, this.playerPiece);
+  }
+
+  startGame(piece: 1 | 2): void {
+    this.playerPiece = piece;
+    this.gameActive = true;
+    this.tictactoeService.startGame(this.playerPiece);
   }
 
   newGame(): void {
-    this.tictactoeService.startGame();
+    this.gameActive = false;
   }
 }
