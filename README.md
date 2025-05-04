@@ -4,18 +4,6 @@ A couple of interactive widgets that simulate long-running operations in the bro
 
 Hosted using Github Pages at: <a href="https://sbwhitt.github.io/web-worker-demo/" target="_blank">https://sbwhitt.github.io/web-worker-demo/</a>
 
-## Widgets
-
-### TicTacToe Learner
-* Reinforcement Learning applied to TicTacToe
-* Implemented using QLearning
-* Train Learner on a specific number of games
-  * Learner converges after playing ~60,000 games with the current setup
-
-### Fibonacci Number Finder
-* Exponential time algorithm to find Nth Fibonacci number
-* Very slow
-
 ## WebWorker Overview
 * Multi-threading in the browser
 * Best for long-running CPU intensive operations on the client side
@@ -72,35 +60,14 @@ addEventListener('message', ({ data }) => {
 2. https://medium.com/codex/web-workers-in-angular-99fc4dac1d40
 
 
-## Additional Details
+## Widgets
 
-### Q-Learning for TicTacToe
-* Define states, actions, and rewards, defining the Learner's environment
-* States are individual board states, represented by a nine digit string made up of 0, 1, or 2
-  * 0 is empty tile, 1 is X, 2 is O
-* Nine actions corresponding to placing a piece in any of the nine tiles
-* Reward values are passed to the Learner after every action
-  * Large negative reward for state resulting in a loss
-  * Positive reward for winning state
-  * Small negative rewards for active game states and draws
-* Learn from experience tuples at each time step: <s, a, s', r>
-  * Previous state 's'
-  * Action carried out by the learner 'a'
-  * The resulting state 's''
-  * The resulting reward value 'r'
-* Receive new experience tuple every turn
-* Learner builds a large lookup table of every state-action pair, the Q-Table
-  * Keeps track of the discounted cumulative reward for each pair
-  * When presented with a state, learner looks it up and returns the action that corresponds to the highest reward value
-* Size of lookup table is the number of states times the number of actions
-  * 3^9 different states, 9 tiles with 3 options each
-  * 9 possible actions
-  * Size of Q-Table is (3^9) * 9 = 177,147
-  * Some states can be excluded since they are invalid board states, but state space is so small that it doesn't matter too much
-* Other more complex methods, like Deep QLearning used for harder problems since Q-Table grows very quickly
+### TicTacToe Learner
+* Reinforcement Learning applied to TicTacToe
+* Implemented using QLearning
+* Train Learner on a specific number of games
+  * Learner converges after playing ~60,000 games with the current setup
 
-### More Info on RL/QLearning
-
-1. Overview: https://en.wikipedia.org/wiki/Q-learning
-2. Tensorflow overview: https://www.tensorflow.org/agents/tutorials/0_intro_rl
-3. Deep QNetworks paper: https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf
+### Fibonacci Number Finder
+* Exponential time algorithm to find Nth Fibonacci number
+* Very slow
