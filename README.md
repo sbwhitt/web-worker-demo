@@ -28,7 +28,7 @@ Hosted using Github Pages at: <a href="https://sbwhitt.github.io/web-worker-demo
 * Create new WebWorker file using the Angular CLI: `ng generate web-worker <name>`
   * Output is `<name>.worker.ts`
   * Also creates `tsconfig.worker.json` with settings for compiling worker ts file
-* Initialize worker with `new Worker(new URL('<name>.worker', import.meta.url))`
+* Initialize worker with `new Worker(new URL('path/to/<name>.worker', import.meta.url))`
   * Must use `import.meta.url` when importing worker file due to path changes during bundling
 * Angular packages all dependencies used by worker and creates contained script for worker
 
