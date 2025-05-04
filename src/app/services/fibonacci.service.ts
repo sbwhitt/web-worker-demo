@@ -23,28 +23,8 @@ export class FibonacciService {
     this.initWorker();
   }
 
-  public findNumber(num: number): void {
-    this.running.set(true);
-    if (!this.worker || !this.settingsService.webWorkersEnabled()) {
-      this.findNumberNoWorker(num);
-      return;
-    }
-    this.worker.onmessage = (({ data }) => {
-      this.result.set(data);
-      this.running.set(false);
-    });
-    this.worker.postMessage(num);
-  }
-
-  public terminateWorker(): void {
-    if (!this.worker) { return; }
-    this.worker.terminate();
-    this.result.set(0);
-    this.running.set(false);
-    this.initWorker();
-  }
-
   private initWorker(): void {
+    // check for WebWorker support
     if (!window.Worker) {
       console.error("WebWorkers not supported by browser!");
       this.worker = null;
@@ -54,8 +34,36 @@ export class FibonacciService {
     }
   }
 
-  private findNumberNoWorker(num: number): void {
-    this.result.set(fibonacci(num));
+  public findNumber(num: number): void {
+    this.running.set(true);
+
+    // backup for when WebWorker not supported/disabled
+    if (!this.worker || !this.settingsService.webWorkersEnabled()) {
+      this.result.set(fibonacci(num));
+      this.running.set(false);
+      return;
+    }
+
+    // handle worker output message
+    this.worker.onmessage = (({ data }) => {
+      this.result.set(data);
+      this.running.set(false);
+    });
+
+    // worker error handler
+    this.worker.onerror = ((err) => {
+      console.error("Error occurred in WebWorker: ", err);
+    });
+
+    // start worker script with input
+    this.worker.postMessage(num);
+  }
+
+  public terminateWorker(): void {
+    if (!this.worker) { return; }
+    this.worker.terminate();
+    this.result.set(0);
     this.running.set(false);
+    this.initWorker();
   }
 }

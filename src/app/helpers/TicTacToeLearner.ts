@@ -57,7 +57,7 @@ export class TicTacToeLearner {
   }
 
   public startGame(playerPiece: 1 | 2): GameState {
-    this.train(1); // make sure learner is fully initialized
+    this.train(1); // hack, make sure learner is fully initialized
     let board = "000000000";
     if (playerPiece === 2) {
       const action = this.qLearner.setState(this.toState(board));
