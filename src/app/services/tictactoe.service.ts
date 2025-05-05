@@ -30,6 +30,24 @@ export class TicTacToeService {
     }
     else {
       this.worker = new Worker(new URL('../workers/tictactoe.worker', import.meta.url));
+
+      // handle worker output message
+      this.worker.onmessage = ({ data }) => {
+        // handle progress update
+        if (typeof data === "number") {
+          this.gamesFinished.set(data);
+        }
+        // training complete, init learner with output
+        else {
+          this.learner = new TicTacToeLearner(data);
+          setTimeout(() => this.learnerActive.set(true), 500);
+        }
+      };
+
+      // worker error handler
+      this.worker.onerror = ((err) => {
+        console.error("Error occurred in WebWorker: ", err);
+      });
     }
   }
 
@@ -48,24 +66,6 @@ export class TicTacToeService {
       this.trainLearnerNoWorker(games);
       return;
     }
-
-    // handle worker output message
-    this.worker.onmessage = ({ data }) => {
-      // handle progress update
-      if (typeof data === "number") {
-        this.gamesFinished.set(data);
-      }
-      // training complete, init learner with output
-      else {
-        this.learner = new TicTacToeLearner(data);
-        setTimeout(() => this.learnerActive.set(true), 500);
-      }
-    };
-
-    // worker error handler
-    this.worker.onerror = ((err) => {
-      console.error("Error occurred in WebWorker: ", err);
-    });
 
     // start worker script with input
     this.worker.postMessage(games);

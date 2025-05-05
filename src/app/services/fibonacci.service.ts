@@ -31,6 +31,17 @@ export class FibonacciService {
     }
     else {
       this.worker = new Worker(new URL('../workers/fibonacci.worker', import.meta.url));
+
+      // handle worker output message
+      this.worker.onmessage = (({ data }) => {
+        this.result.set(data);
+        this.running.set(false);
+      });
+
+      // worker error handler
+      this.worker.onerror = ((err) => {
+        console.error("Error occurred in WebWorker: ", err);
+      });
     }
   }
 
@@ -43,17 +54,6 @@ export class FibonacciService {
       this.running.set(false);
       return;
     }
-
-    // handle worker output message
-    this.worker.onmessage = (({ data }) => {
-      this.result.set(data);
-      this.running.set(false);
-    });
-
-    // worker error handler
-    this.worker.onerror = ((err) => {
-      console.error("Error occurred in WebWorker: ", err);
-    });
 
     // start worker script with input
     this.worker.postMessage(num);
